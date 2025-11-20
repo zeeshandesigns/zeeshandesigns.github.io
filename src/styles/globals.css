@@ -1,0 +1,234 @@
+/**
+ * Global Styles for Zynk
+ * Base typography, element defaults, and @font-face declarations
+ */
+
+/* ========================================
+ * FONT LOADING
+ * ======================================== */
+
+/**
+ * GT Walsheim Font Loading
+ * 
+ * INSTRUCTIONS:
+ * 1. Obtain GT Walsheim WOFF2 files (Regular, Medium, Bold weights)
+ * 2. Place files in /public/assets/fonts/ directory:
+ *    - GTWalsheim-Regular.woff2
+ *    - GTWalsheim-Medium.woff2
+ *    - GTWalsheim-Bold.woff2
+ * 3. Uncomment the @font-face declarations below
+ * 
+ * LICENSE NOTE:
+ * GT Walsheim is a commercial typeface by Grilli Type.
+ * Ensure you have proper licensing before using in production.
+ * 
+ * FALLBACK STRATEGY:
+ * If GT Walsheim is unavailable, the design system falls back to Inter
+ * (Google Fonts) which provides similar geometric characteristics.
+ */
+
+/* Uncomment when GT Walsheim files are available:
+
+@font-face {
+  font-family: 'GT Walsheim';
+  src: url('/assets/fonts/GTWalsheim-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT Walsheim';
+  src: url('/assets/fonts/GTWalsheim-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GT Walsheim';
+  src: url('/assets/fonts/GTWalsheim-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+*/
+
+/* FALLBACK: Inter from Google Fonts (load this if GT Walsheim unavailable) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ========================================
+ * BASE STYLES
+ * ======================================== */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-base);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+}
+
+/* ========================================
+ * TYPOGRAPHY HIERARCHY
+ * ======================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: var(--fs-xxl);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--fs-xl);
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: var(--fs-lg);
+}
+
+h4 {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+}
+
+h5 {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-semibold);
+}
+
+h6 {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+p {
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--space-md);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* ========================================
+ * LINKS
+ * ======================================== */
+
+a {
+  color: var(--color-accent);
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ========================================
+ * SELECTION
+ * ======================================== */
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+/* ========================================
+ * SCROLLBAR (Webkit browsers)
+ * ======================================== */
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-alt);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text);
+}
+
+/* ========================================
+ * FOCUS MANAGEMENT
+ * ======================================== */
+
+/* Remove default outline for mouse users, keep for keyboard */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ========================================
+ * CODE BLOCKS
+ * ======================================== */
+
+code,
+pre {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+}
+
+code {
+  padding: 2px 6px;
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+}
+
+pre {
+  padding: var(--space-md);
+  background: var(--color-bg);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  line-height: var(--lh-base);
+}
+
+pre code {
+  padding: 0;
+  background: none;
+  color: inherit;
+}
+
+/* ========================================
+ * RESPONSIVE TYPOGRAPHY
+ * ======================================== */
+
+@media (max-width: 640px) {
+  :root {
+    --fs-xxl: 36px;
+    --fs-xl: 28px;
+    --fs-lg: 20px;
+  }
+}

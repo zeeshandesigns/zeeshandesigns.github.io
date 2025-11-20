@@ -1,0 +1,151 @@
+/**
+ * Design Tokens for Zynk
+ * Enterprise-level design system foundation
+ * 
+ * This file establishes the core design language through CSS custom properties.
+ * All color, spacing, typography, and elevation values should reference these tokens.
+ * 
+ * Usage: var(--token-name)
+ * Example: color: var(--color-accent);
+ */
+
+:root {
+  /* ========================================
+   * TYPOGRAPHY
+   * ======================================== */
+  
+  /* Font families */
+  /* GT Walsheim is the primary typeface. If license unavailable, falls back to Inter/system fonts. */
+  --font-sans: 'GT Walsheim', 'Walsheim', 'Inter', system-ui, -apple-system,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+
+  /* Font sizes - harmonious scale */
+  --fs-xxl: 48px; /* Hero headlines */
+  --fs-xl: 36px; /* Section titles */
+  --fs-lg: 24px; /* Subsection headings */
+  --fs-md: 18px; /* Body large, callouts */
+  --fs-base: 16px; /* Default body text */
+  --fs-sm: 14px; /* Supporting text */
+  --fs-xs: 12px; /* Captions, labels */
+
+  /* Line heights */
+  --lh-tight: 1.2;
+  --lh-base: 1.5;
+  --lh-relaxed: 1.7;
+
+  /* Font weights */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* ========================================
+   * SPACING SCALE
+   * ======================================== */
+  
+  /* 8-point grid system for consistent spacing rhythm */
+  --space-xxl: 64px;
+  --space-xl: 40px;
+  --space-lg: 24px;
+  --space-md: 16px;
+  --space-sm: 8px;
+  --space-xs: 4px;
+
+  /* Container widths */
+  --container-max: 1200px;
+  --container-padding: var(--space-lg);
+
+  /* ========================================
+   * COLORS
+   * ======================================== */
+  
+  /* Enterprise neutral palette - sophisticated, high-contrast */
+  --color-bg: #0f1724; /* Deep neutral for headers/footers */
+  --color-surface: #ffffff; /* Cards, panels, main content areas */
+  --color-surface-alt: #f9fafb; /* Alternate surface for subtle differentiation */
+  --color-text: #0b1220; /* Primary text - high contrast on white */
+  --color-text-inverse: #ffffff; /* Text on dark backgrounds */
+  --color-muted: #6b7280; /* Secondary text, less prominent content */
+  --color-border: #e6e9ee; /* Dividers, card borders */
+
+  /* Brand accent - authoritative blue */
+  --color-accent: #0b63ff; /* Primary CTA, links, interactive elements */
+  --color-accent-hover: #054acc; /* Hover/active state */
+  --color-accent-light: #eff6ff; /* Subtle backgrounds, highlights */
+
+  /* Semantic colors */
+  --color-success: #12b76a;
+  --color-success-light: #d1fadf;
+  --color-warning: #f79009;
+  --color-warning-light: #fef0c7;
+  --color-danger: #ef4444;
+  --color-danger-light: #fee2e2;
+  --color-info: #0ba5ec;
+  --color-info-light: #e0f2fe;
+
+  /* ========================================
+   * ELEVATION / SHADOWS
+   * ======================================== */
+  
+  /* Subtle layering for depth without heavy drop shadows */
+  --shadow-sm: 0 1px 2px rgba(12, 14, 20, 0.04);
+  --shadow-md: 0 4px 6px rgba(12, 14, 20, 0.06);
+  --shadow-lg: 0 10px 20px rgba(12, 14, 20, 0.08);
+  --shadow-xl: 0 20px 40px rgba(12, 14, 20, 0.12);
+
+  /* Focus rings for accessibility */
+  --focus-ring: 0 0 0 3px var(--color-accent-light);
+  --focus-ring-danger: 0 0 0 3px var(--color-danger-light);
+
+  /* ========================================
+   * BORDER RADIUS
+   * ======================================== */
+  
+  --radius-sm: 6px; /* Buttons, inputs */
+  --radius-md: 12px; /* Cards */
+  --radius-lg: 20px; /* Modals, large containers */
+  --radius-full: 9999px; /* Pills, avatars */
+
+  /* ========================================
+   * TRANSITIONS
+   * ======================================== */
+  
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ========================================
+   * Z-INDEX SCALE
+   * ======================================== */
+  
+  --z-base: 1;
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-toast: 1060;
+  --z-tooltip: 1070;
+
+  /* ========================================
+   * BREAKPOINTS (for JS access via getComputedStyle)
+   * ======================================== */
+  
+  --bp-sm: 640px;
+  --bp-md: 1024px;
+  --bp-lg: 1280px;
+}
+
+/* ========================================
+ * DARK MODE SUPPORT (Optional)
+ * ======================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Uncomment and customize if implementing dark mode */
+    /* --color-surface: #1a1f2e;
+    --color-text: #e4e7eb;
+    --color-border: #2d3748; */
+  }
+}
