@@ -3,32 +3,31 @@
    =================================== */
 :root {
   /* Colors */
-  --color-accent: #0b63ff;
-  --color-accent-hover: #0952d9;
-  --color-accent-active: #0741b3;
-
-  --color-text-primary: #0f1724;
-  --color-text-secondary: #3d4852;
-  --color-text-tertiary: #6b7280;
-  --color-text-inverse: #ffffff;
-
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f3f4f6;
-  --color-bg-tertiary: #e5e7eb;
-  --color-bg-dark: #0f1724;
-
-  --color-border: #d1d5db;
-  --color-border-light: #e5e7eb;
-
-  --color-success: #10b981;
-  --color-error: #ef4444;
-  --color-warning: #f59e0b;
-
+  --color-accent: #0B63FF;
+  --color-accent-hover: #0952D9;
+  --color-accent-active: #0741B3;
+  
+  --color-text-primary: #0F1724;
+  --color-text-secondary: #3D4852;
+  --color-text-tertiary: #6B7280;
+  --color-text-inverse: #FFFFFF;
+  
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F3F4F6;
+  --color-bg-tertiary: #E5E7EB;
+  --color-bg-dark: #0F1724;
+  
+  --color-border: #D1D5DB;
+  --color-border-light: #E5E7EB;
+  
+  --color-success: #10B981;
+  --color-error: #EF4444;
+  --color-warning: #F59E0B;
+  
   /* Typography */
-  --font-sans:
-    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   --font-mono: 'Courier New', monospace;
-
+  
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -38,16 +37,16 @@
   --font-size-3xl: 1.875rem;
   --font-size-4xl: 2.25rem;
   --font-size-5xl: 3rem;
-
+  
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
-
+  
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-
+  
   /* Spacing (8-point grid) */
   --space-xs: 4px;
   --space-sm: 8px;
@@ -57,20 +56,20 @@
   --space-2xl: 48px;
   --space-3xl: 64px;
   --space-4xl: 96px;
-
+  
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-
+  
   /* Border Radius */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-full: 9999px;
-
+  
   /* Z-index */
   --z-dropdown: 1000;
   --z-sticky: 1020;
@@ -78,14 +77,14 @@
   --z-modal: 1040;
   --z-popover: 1050;
   --z-tooltip: 1060;
-
+  
   /* Breakpoints */
   --bp-sm: 640px;
   --bp-md: 768px;
   --bp-lg: 1024px;
   --bp-xl: 1280px;
   --bp-2xl: 1536px;
-
+  
   /* Container */
   --container-max: 1200px;
   --container-padding: var(--space-lg);
@@ -94,9 +93,7 @@
 /* ===================================
    RESET & BASE STYLES
    =================================== */
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
@@ -120,12 +117,7 @@ body {
   min-height: 100vh;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
   color: var(--color-text-primary);
@@ -344,11 +336,11 @@ button {
   .nav-desktop {
     display: block;
   }
-
+  
   .cta-desktop {
     display: inline-flex;
   }
-
+  
   .mobile-menu-btn {
     display: none;
   }
@@ -494,11 +486,7 @@ button {
 .placeholder-image {
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: linear-gradient(
-    135deg,
-    var(--color-bg-tertiary) 0%,
-    var(--color-bg-secondary) 100%
-  );
+  background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, var(--color-bg-secondary) 100%);
 }
 
 /* ===================================
@@ -506,11 +494,7 @@ button {
    =================================== */
 .hero {
   padding: var(--space-4xl) 0 var(--space-3xl);
-  background: linear-gradient(
-    180deg,
-    var(--color-bg-secondary) 0%,
-    var(--color-bg-primary) 100%
-  );
+  background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg-primary) 100%);
 }
 
 .hero-content {
@@ -542,11 +526,7 @@ button {
 .hero-placeholder {
   width: 100%;
   aspect-ratio: 4 / 3;
-  background: linear-gradient(
-    135deg,
-    var(--color-accent) 0%,
-    var(--color-accent-hover) 100%
-  );
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
   border-radius: var(--radius-xl);
 }
 
@@ -554,7 +534,7 @@ button {
   .hero h1 {
     font-size: var(--font-size-5xl);
   }
-
+  
   .hero-ctas {
     flex-direction: row;
   }
@@ -700,11 +680,7 @@ section {
 .service-icon {
   width: 64px;
   height: 64px;
-  background: linear-gradient(
-    135deg,
-    var(--color-accent) 0%,
-    var(--color-accent-hover) 100%
-  );
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
@@ -899,11 +875,11 @@ section {
   .timeline::before {
     left: 30px;
   }
-
+  
   .timeline-item {
     padding-left: 60px;
   }
-
+  
   .timeline-year {
     font-size: var(--font-size-xl);
   }
