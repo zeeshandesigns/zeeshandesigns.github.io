@@ -1,0 +1,476 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// User model - Customers and Admin only (no sellers/stores)
+model User {
+    id      String  @id
+    name    String
+    email   String
+    image   String
+    cart    Json    @default("{}")
+    isAdmin Boolean @default(false)
+
+    // Relations
+    ratings            Rating[]
+    Address            Address[]
+    buyerOrders        Order[]              @relation("BuyerRelation")
+    disputes           Dispute[]
+    wallet             Wallet?
+    walletTransactions WalletTransaction[]
+    walletTopUps       WalletTopUp[]
+    orderReviews       OrderReview[]
+    notifications      Notification[]
+}
+
+// Notification model - In-app notifications for users and admins
+model Notification {
+    id        String   @id @default(cuid())
+    userId    String
+    type      NotificationType
+    title     String
+    message   String
+    actionUrl String?  // Optional link to relevant page
+    isRead    Boolean  @default(false)
+    createdAt DateTime @default(now())
+    
+    // Relations
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    @@index([userId])
+    @@index([isRead])
+    @@index([createdAt])
+}
+
+enum NotificationType {
+    ORDER_PLACED       // When user places an order
+    ORDER_VERIFIED     // When admin verifies payment
+    CODE_DELIVERED     // When codes are delivered
+    WALLET_TOPUP       // When wallet top-up is approved
+    DISPUTE_UPDATE     // When dispute status changes
+    REFUND_ISSUED      // When refund is processed
+    ADMIN_ORDER        // For admin: new order notification
+    ADMIN_PAYMENT      // For admin: payment submission
+    ADMIN_DISPUTE      // For admin: new dispute
+    SYSTEM_UPDATE      // General system updates
+}
+
+// Category model - Gift card categories
+model Category {
+    id          String   @id @default(cuid())
+    slug        String   @unique
+    name        String
+    emoji       String
+    description String
+    gradient    String
+    image       String?
+    logo        String?  // URL to category logo (displays instead of emoji if provided)
+    order       Int      @default(0)
+    isActive    Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    products    Product[]
+}
+
+// Region model - Geographic regions for gift cards
+model Region {
+    id          String   @id @default(cuid())
+    code        String   @unique  // "USA", "UK", "UAE", "KSA"
+    name        String              // "United States", "United Kingdom", etc.
+    flag        String              // "🇺🇸", "🇬🇧", "🇦🇪", "🇸🇦"
+    currency    String              // "USD", "GBP", "AED", "SAR"
+    isActive    Boolean  @default(true)
+    order       Int      @default(0)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    products    Product[]
+}
+
+// Product model - Hardcoded gift cards (no dynamic creation)
+model Product {
+    id          String   @id @default(cuid())
+    name        String
+    description String
+    mrp         Float
+    price       Float
+    images      String[]
+    logo        String?  // URL to product logo/brand icon
+    category    String
+    categoryId  String?
+    regionId    String?
+    inStock     Boolean  @default(true)
+    
+    // Gift Card Delivery Fields
+    deliveryType      String   @default("physical")       // "physical" | "auto_delivery" | "manual_verification"
+    digitalCodes      Json     @default("[]")             // Array of code objects: [{code: "XXX", used: false, orderId: null}]
+    requiresApproval  Boolean  @default(false)            // true = needs admin verification before delivery
+    stockType         String   @default("unlimited")      // "limited" | "unlimited"
+    availableCodes    Int      @default(0)                // Count of unused codes in digitalCodes
+    
+    // Rating Fields
+    totalRatings   Int   @default(0)
+    averageRating  Float @default(0)
+    
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    // Relations
+    categoryRelation Category? @relation(fields: [categoryId], references: [id])
+    regionRelation   Region?   @relation(fields: [regionId], references: [id])
+    orderItems       OrderItem[]
+    rating           Rating[]
+    deliveredCodes   DeliveredCode[]
+    reviews          OrderReview[]
+}
+
+enum OrderStatus {
+    ORDER_PLACED          // Initial order created
+    PAYMENT_PENDING       // Waiting for bank transfer
+    PAYMENT_SUBMITTED     // User uploaded payment proof
+    PAYMENT_VERIFIED      // Admin verified payment (or auto-verified)
+    PAYMENT_REJECTED      // Admin rejected payment
+    PROCESSING            // Order being processed
+    CODE_DELIVERED        // Digital code delivered to user
+    SHIPPED               // Physical product shipped
+    DELIVERED             // Order completed
+    CANCELLED             // Order cancelled
+}
+
+// Order model - Customer purchases (wallet payment only)
+model Order {
+    id            String      @id @default(cuid())
+    total         Float
+    status        OrderStatus @default(ORDER_PLACED)
+    userId        String
+    addressId     String
+    isPaid        Boolean     @default(true) // Always true since wallet is pre-funded
+    
+    // Wallet payment tracking
+    walletTransactionId String? // Link to wallet deduction
+    
+    // Legacy payment fields (deprecated - kept for data migration)
+    paymentMethod     String?  @default("WALLET") // Legacy field
+    paymentProof      String?  // Legacy field
+    paymentReference  String?  // Legacy field
+    verifiedBy        String?  // Legacy field
+    verifiedAt        DateTime? // Legacy field
+    rejectionReason   String?  // Legacy field
+    
+    // Cancellation Fields
+    cancellationReason String? // Reason why order was cancelled
+    
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    isCouponUsed  Boolean  @default(false)
+    coupon        Json     @default("{}")
+    orderItems    OrderItem[]
+
+    // Relations
+    user              User               @relation("BuyerRelation", fields: [userId], references: [id])
+    address           Address            @relation(fields: [addressId], references: [id])
+    deliveredCodes    DeliveredCode[]
+    disputes          Dispute[]
+    reviews           OrderReview[]
+    walletTransaction WalletTransaction? @relation(fields: [walletTransactionId], references: [id])
+}
+
+// OrderItem model - Line items in orders (no store reference)
+model OrderItem {
+    orderId   String
+    productId String
+    quantity  Int
+    price     Float
+
+    // Relations
+    order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    product Product @relation(fields: [productId], references: [id])
+
+    @@id([orderId, productId])
+}
+
+// Required for creating a Rating: rating, review, userId, productId
+model Rating {
+    id        String   @id @default(cuid())
+    rating    Int
+    review    String
+    userId    String
+    productId String
+    orderId   String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Relations
+    user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, productId, orderId])
+}
+
+// Required for creating an Address: userId, name, email, street, city, state, zip, country, phone
+model Address {
+    id        String   @id @default(cuid())
+    userId    String
+    name      String
+    email     String
+    street    String
+    city      String
+    state     String
+    zip       String
+    country   String
+    phone     String
+    createdAt DateTime @default(now())
+
+    // Relations
+    Order Order[]
+    user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Coupon model - Discount codes
+model Coupon {
+    code        String   @id
+    description String
+    discount    Float
+    forNewUser  Boolean
+    forMember   Boolean  @default(false)
+    isPublic    Boolean
+    expiresAt   DateTime
+    createdAt   DateTime @default(now())
+}
+
+// DeliveredCode model - Track delivered gift card codes
+model DeliveredCode {
+    id            String    @id @default(cuid())
+    orderId       String
+    productId     String
+    userId        String
+    code          String    // The actual gift card code/PIN
+    deliveredAt   DateTime  @default(now())
+    viewedAt      DateTime? // Track when user first viewed the code
+    
+    // Relations
+    order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    
+    // Indexes for faster queries
+    @@index([orderId])
+    @@index([userId])
+    @@index([productId])
+}
+
+// Dispute model - Customer disputes for orders
+enum DisputeStatus {
+    OPEN              // Customer opened dispute
+    UNDER_REVIEW      // Admin reviewing
+    AWAITING_RESPONSE // Awaiting customer response
+    RESOLVED          // Dispute resolved
+    CLOSED            // Dispute closed (rejected or completed)
+}
+
+enum DisputeReason {
+    CODE_NOT_WORKING      // Gift card code doesn't work
+    WRONG_CODE_RECEIVED   // Received wrong code
+    INCOMPLETE_DELIVERY   // Missing codes
+    PAYMENT_ISSUES        // Payment deducted but no order
+    REFUND_REQUEST        // Want refund
+    OTHER                 // Other issues
+}
+
+model Dispute {
+    id              String        @id @default(cuid())
+    orderId         String
+    userId          String
+    reason          DisputeReason
+    description     String        // Customer's explanation
+    status          DisputeStatus @default(OPEN)
+    
+    // Evidence
+    images          String[]      @default([])  // Screenshots/proof
+    
+    // Admin Response (deprecated - use messages instead)
+    adminResponse   String?       // Legacy admin reply
+    resolvedBy      String?       // Admin userId who resolved
+    resolvedAt      DateTime?     // When resolved
+    resolution      String?       // Resolution details
+    
+    // Refund info (if applicable)
+    refundAmount    Float?
+    refundIssued    Boolean       @default(false)
+    refundedAt      DateTime?
+    
+    // Chat & Closure Rules
+    canAdminClose   Boolean       @default(false) // True only for full refunds
+    closedBy        String?       // userId who closed (customer or admin)
+    closedAt        DateTime?     // When dispute was closed
+    
+    createdAt       DateTime      @default(now())
+    updatedAt       DateTime      @updatedAt
+    
+    // Relations
+    order    Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+    messages DisputeMessage[]
+    
+    @@index([orderId])
+    @@index([userId])
+    @@index([status])
+}
+
+// ===== WALLET SYSTEM MODELS =====
+
+// Wallet model - User's balance
+model Wallet {
+    id        String   @id @default(cuid())
+    userId    String   @unique
+    balance   Float    @default(0)
+    currency  String   @default("PKR")
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    // Relations
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    @@index([userId])
+}
+
+enum WalletTransactionType {
+    TOP_UP        // Money added to wallet
+    PURCHASE      // Money spent on order
+    REFUND        // Money refunded from dispute/cancel
+    ADMIN_CREDIT  // Admin manually added funds
+    ADMIN_DEBIT   // Admin manually removed funds
+}
+
+enum WalletTransactionStatus {
+    PENDING    // Transaction initiated
+    COMPLETED  // Transaction successful
+    FAILED     // Transaction failed
+    REVERSED   // Transaction reversed/refunded
+}
+
+// WalletTransaction model - All wallet activity
+model WalletTransaction {
+    id          String                   @id @default(cuid())
+    userId      String
+    type        WalletTransactionType
+    amount      Float
+    balanceBefore Float                  // Balance before transaction
+    balanceAfter  Float                  // Balance after transaction
+    status      WalletTransactionStatus  @default(COMPLETED)
+    description String                   // Human-readable description
+    
+    // References
+    orderId      String?    // If related to an order
+    topUpId      String?    // If related to a top-up
+    disputeId    String?    // If related to a dispute refund
+    
+    metadata    Json       @default("{}")  // Extra info
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+    
+    // Relations
+    user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    topUp  WalletTopUp?   @relation(fields: [topUpId], references: [id])
+    orders Order[]
+    
+    @@index([userId])
+    @@index([type])
+    @@index([createdAt])
+}
+
+enum TopUpStatus {
+    PENDING           // User initiated top-up
+    PAYMENT_SUBMITTED // User uploaded payment proof
+    VERIFIED          // Admin verified, balance added
+    REJECTED          // Admin rejected payment
+    CANCELLED         // User cancelled
+}
+
+// WalletTopUp model - Payment verification for wallet recharges
+model WalletTopUp {
+    id                String      @id @default(cuid())
+    userId            String
+    amount            Float
+    status            TopUpStatus @default(PENDING)
+    
+    // Payment proof (bank transfer)
+    paymentProof      String?    // URL to uploaded screenshot
+    paymentReference  String?    // Bank transaction reference
+    paymentMethod     String     @default("BANK_TRANSFER")
+    
+    // Verification
+    verifiedBy        String?    // Admin userId who verified
+    verifiedAt        DateTime?  // When verified
+    rejectionReason   String?    // Why rejected (if applicable)
+    
+    // Wallet transaction link
+    transactionId     String?    // Link to WalletTransaction after approval
+    
+    createdAt         DateTime   @default(now())
+    updatedAt         DateTime   @updatedAt
+    
+    // Relations
+    user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+    transactions WalletTransaction[]
+    
+    @@index([userId])
+    @@index([status])
+    @@index([createdAt])
+}
+
+// ===== REVIEW SYSTEM MODELS =====
+
+// OrderReview model - Product reviews after delivery
+model OrderReview {
+    id          String   @id @default(cuid())
+    orderId     String
+    userId      String
+    productId   String
+    rating      Int      // 1-5 stars
+    review      String?  // Optional written review
+    isVerified  Boolean  @default(true) // Always verified (can only review purchased items)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    // Relations
+    user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    
+    // One review per product per order
+    @@unique([orderId, productId])
+    @@index([productId])
+    @@index([userId])
+}
+
+// ===== DISPUTE CHAT SYSTEM =====
+
+enum MessageSender {
+    CUSTOMER
+    ADMIN
+    SYSTEM
+}
+
+// DisputeMessage model - Chat messages in disputes
+model DisputeMessage {
+    id         String        @id @default(cuid())
+    disputeId  String
+    senderId   String?       // userId (null for system messages)
+    senderType MessageSender
+    message    String
+    attachments String[]     @default([]) // URLs to images/files
+    isRead     Boolean       @default(false)
+    createdAt  DateTime      @default(now())
+    
+    // Relations
+    dispute Dispute @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+    
+    @@index([disputeId])
+    @@index([createdAt])
+}

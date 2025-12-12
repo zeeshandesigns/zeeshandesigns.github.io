@@ -1,22 +1,21 @@
-# 🎴 PakCards - Complete Documentation
+# 📚 PakCards - Complete Documentation
 
-**Last Updated:** November 16, 2025  
+**Last Updated:** November 14, 2025  
 **Project:** PakCards Gift Card Marketplace  
 **Version:** 1.0.0
 
 ---
 
-## 📚 Table of Contents
+## 📖 Table of Contents
 
-1. Quick Start Guide
-2. Environment Setup
-3. Database Configuration
-4. API Reference
-5. Deployment Guide
-6. Testing Checklist
-7. Troubleshooting
-8. Tech Stack & Features
-9. License
+1. [Quick Start Guide](#quick-start-guide)
+2. [Environment Setup](#environment-setup)
+3. [Database Configuration](#database-configuration)
+4. [API Reference](#api-reference)
+5. [Deployment Guide](#deployment-guide)
+6. [Testing Checklist](#testing-checklist)
+7. [Common Commands](#common-commands)
+8. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -57,11 +56,11 @@ Visit [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 🔑 Environment Setup
+## 🔐 Environment Setup
 
 ### Required Environment Variables
 
-```env
+```bash
 # Database (Neon PostgreSQL)
 DATABASE_URL="postgresql://username:password@hostname-pooler.region.aws.neon.tech/dbname?sslmode=require"
 DIRECT_URL="postgresql://username:password@hostname.region.aws.neon.tech/dbname?sslmode=require"
@@ -86,6 +85,22 @@ OPTIMIZE_API_KEY=xxx
 # Application Settings
 NEXT_PUBLIC_CURRENCY_SYMBOL_PKR=₨
 ```
+
+### Development vs Production
+
+**Development (.env.local):**
+
+- Use test Clerk keys (pk_test_xxx)
+- Can use local PostgreSQL
+- Test ImageKit folder
+- Inngest test environment
+
+**Production (.env.production):**
+
+- Must use live Clerk keys (pk_live_xxx)
+- Production Neon database
+- Production ImageKit bucket
+- Inngest production environment
 
 ---
 
@@ -306,8 +321,8 @@ Issue refund (Admin only)
 
 ```json
 {
-	"refundType": "HALF" | "FULL",
-	"resolution": "Description"
+  "refundType": "HALF" | "FULL",
+  "resolution": "Description"
 }
 ```
 
@@ -546,7 +561,7 @@ npm run build && npm start
 
 ---
 
-## 🛠️ Troubleshooting
+## 🔧 Troubleshooting
 
 ### Build Fails
 
@@ -656,7 +671,58 @@ npx prisma generate
 
 ---
 
-## 📦 Tech Stack & Key Features
+## 📞 Additional Resources
+
+### Documentation Files
+
+- `README.md` - Project overview
+- `.env.example` - Environment variables template
+- `DEPLOYMENT_CHECKLIST.md` - Full deployment guide
+
+### Important Links
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Clerk Documentation](https://clerk.com/docs)
+- [ImageKit Documentation](https://docs.imagekit.io)
+- [Inngest Documentation](https://www.inngest.com/docs)
+
+---
+
+## 🔒 Security Best Practices
+
+1. **Environment Variables**
+
+   - Never commit .env to git
+   - Use different keys for dev/production
+   - Rotate secrets regularly
+
+2. **Database**
+
+   - Use SSL connections in production
+   - Enable connection pooling
+   - Regular backups
+
+3. **Authentication**
+
+   - Use Clerk production instance
+   - Implement proper role checks
+   - Protect admin routes
+
+4. **API Security**
+
+   - Validate all inputs
+   - Use Prisma to prevent SQL injection
+   - Implement rate limiting (optional)
+
+5. **File Uploads**
+   - Validate file types and sizes
+   - Use secure upload endpoints
+   - Scan for malware (optional)
+
+---
+
+## 📝 Tech Stack
 
 - **Framework:** Next.js 16 (App Router, Turbopack)
 - **Language:** JavaScript (ESM modules)
@@ -669,7 +735,9 @@ npx prisma generate
 - **File Storage:** ImageKit
 - **Charts:** Recharts
 
-### Key Features
+---
+
+## 🎯 Key Features
 
 - ✅ Instant digital gift card delivery
 - ✅ Multi-category support (Gaming, Entertainment, Shopping)
@@ -681,12 +749,6 @@ npx prisma generate
 - ✅ Order dispute management
 - ✅ Real-time notifications
 - ✅ Responsive design (mobile-first)
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License. See [LICENSE.md](./LICENSE.md) for details.
 
 ---
 
